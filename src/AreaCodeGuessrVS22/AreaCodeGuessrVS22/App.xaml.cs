@@ -10,10 +10,6 @@ namespace AreaCodeGuessrVS22
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            var tabort = 99;
-        }
     }
 
 }
