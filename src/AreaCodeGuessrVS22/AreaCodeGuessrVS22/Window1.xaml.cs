@@ -20,8 +20,9 @@ namespace AreaCodeGuessrVS22
     public partial class Window1 : Window
     {
         public Window1()
-        {
+        {               
             InitializeComponent();
+            //YourListBox.ItemsSource = new List<String> { "One", "Two", "Three" };
         }
     }
 }
