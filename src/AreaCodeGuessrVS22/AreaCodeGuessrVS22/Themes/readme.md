@@ -21,7 +21,7 @@ the one that looked most promising.)
 # Add XML to App.xml
 Add the theme, control colours and controls dictionaries by adding this XML to your App.xaml,
 This assumes that you don't change the folder structure used by this project
-
+`
 <Application.Resources>
     <ResourceDictionary>
         <ResourceDictionary.MergedDictionaries>
@@ -35,12 +35,12 @@ This assumes that you don't change the folder structure used by this project
         </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
 </Application.Resources>
-
+`
 
 # Add style to your window
 In your window XAML code (where you define height/width, etc), add:
 
-Style="{DynamicResource CustomWindowStyle}"
+`Style="{DynamicResource CustomWindowStyle}"`
 
 
 
