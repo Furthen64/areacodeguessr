@@ -18,11 +18,31 @@ namespace AreaCodeGuessrVS22
     /// Interaction logic for Window1.xaml
     /// </summary>
     public partial class Window1 : Window
-    {
+    {              
+
+        private SACManager sacm;
+
         public Window1()
         {               
             InitializeComponent();
-            //YourListBox.ItemsSource = new List<String> { "One", "Two", "Three" };
+            numberSeriesLV.ItemsSource = new List<String> { "2", "3", "4", "5", "6", "7", "8", "9" };
+            numberSeriesLV.SelectedIndex = 0;
+            sacm = new SACManager(numberSeriesLV, _inputStateTxt, _areacodeLbl, _areaCodeTxt);    
+        }
+
+
+        
+        private void startBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Requires the user to have selected something
+            if(numberSeriesLV.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select a number series in the list");
+                return;
+            }
+
+            sacm.NextQuestion();
+
         }
     }
 }

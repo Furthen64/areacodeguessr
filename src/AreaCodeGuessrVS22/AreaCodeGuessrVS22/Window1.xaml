@@ -5,22 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AreaCodeGuessrVS22"
         mc:Ignorable="d"
-        Title="Window1" Height="450" Width="750"
+        Title="Window1" Height="750" Width="750"
         Style="{DynamicResource CustomWindowStyle}">
     <StackPanel>
         <StackPanel>
-        <Label FontWeight="Bold" FontSize="24pt">AreaCodeGuessr {version}</Label>
-        <RadioButton GroupName="modeRadios" FontSize="12pt" Padding="5,5,5,5">Normal mode</RadioButton>
-        <RadioButton GroupName="modeRadios" FontSize="12pt" IsChecked="True" Padding="5,5,5,5">One areacode mode</RadioButton>
+            <StackPanel.Background>
+                <LinearGradientBrush EndPoint="1.204,0.5" StartPoint="0.056,0.5">
+                    <GradientStop Color="#FF221a54" Offset="0" />
+                    <GradientStop Color="#FF1c2e51" Offset="1" />
+                </LinearGradientBrush>                
+            </StackPanel.Background>
+            <Label FontWeight="Bold" FontSize="24pt" Padding="5,5,5,0">AreaCodeGuessr {version}</Label>
+            <Label FontSize="9pt" Padding="5,5,5,25">Choose mode, select some number series, hit the Start button</Label>
+            <RadioButton GroupName="modeRadios" FontSize="10pt" Margin="5,5,5,5">Normal mode</RadioButton>
+            <RadioButton GroupName="modeRadios" FontSize="10pt" IsChecked="True" Margin="5,5,5,5">One areacode mode</RadioButton>
+
         </StackPanel>
-        <StackPanel Margin="0,10,0,0">
-        <ListView Name="YourListBox" Height="100">
+        <StackPanel Margin="2,10,2,2">
+        <ListView x:Name="numberSeriesLV" Height="auto" Margin="5" Width="180" HorizontalAlignment="Left">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="125">Select Number series</GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
+            <Button Width="100" x:Name="startBtn" Click="startBtn_Click">Start</Button>
+        </StackPanel>
+        <StackPanel>
+            <Label x:Name="_areacodeLbl">Areacode:</Label>
+            <TextBox x:Name="_areaCodeTxt">AreaCode</TextBox>
+            <TextBox x:Name="_inputStateTxt">Input here</TextBox>
+        </StackPanel>
+
+        <StackPanel>
+            <Grid Background="#FF00FF00">
+                <Label Content="Label" Height="28" HorizontalAlignment="Left" Name="BaseLabel" VerticalAlignment="Top" />
+                <TextBox Height="23" Margin="0,26,0,0" Name="BaseTextBox" VerticalAlignment="Top" />
+            </Grid>
+        </StackPanel>
+
+        <StackPanel>
+            <Button x:Name="_okBtn">OK</Button>
         </StackPanel>
     </StackPanel>
         
