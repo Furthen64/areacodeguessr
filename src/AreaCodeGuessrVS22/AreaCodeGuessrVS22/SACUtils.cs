@@ -23,22 +23,26 @@ namespace AreaCodeGuessrVS22
         private TextBox areaCodeTxt;
         private TextBox inputTextBox;
         private ListView numberSeriesLV;       // The Window1.xaml listview
+        
+        private Label resultLbl;
         public List<StateAreaCode> AllStates { get => allStates; set => allStates = value; }
         public List<StateAreaCode> StatesWithOneAreaCode { get => statesWithOneAreaCode; set => statesWithOneAreaCode = value; }
         public ListView NumberSeriesLV { get => numberSeriesLV; set => numberSeriesLV = value; }
-        public TextBox InputTextBox { get => inputTextBox; set => inputTextBox = value; }
+        public TextBox InputStateTxt { get => inputTextBox; set => inputTextBox = value; }
         public TextBox AreaCodeTxt { get => areaCodeTxt; set => areaCodeTxt = value; }
+        public Label ResultLbl { get => resultLbl; set => resultLbl = value; }
+        
 
         // The manager grabs all the controllers it needs,
         // So when its time to read or modify its values, it doesnt have to ask for it
 
-        public SACManager(ListView listviewCtrl, TextBox _inputTextBox, Label _statusLbl, TextBox _areaCodeTxt)
+        public SACManager(ListView listviewCtrl, TextBox _inputStateTxt, Label _resultLbl, TextBox _areaCodeTxt)
         {
             // Assign Controls
             NumberSeriesLV = listviewCtrl;
+            ResultLbl = _resultLbl;
+            InputStateTxt = _inputStateTxt;
             AreaCodeTxt = _areaCodeTxt;
-            InputTextBox = _inputTextBox;
-
 
             // Load and parse from file
             rand = new Random(DateTime.UtcNow.Millisecond);
@@ -60,7 +64,7 @@ namespace AreaCodeGuessrVS22
 
                 AreaCodeTxt.Text = randomSAC.areaCodes[0].ToString();
                 hiddenStatename = randomSAC.stateName;
-                InputTextBox.Text = "";
+                InputStateTxt.Text = "";
                 
             }
 
@@ -84,16 +88,12 @@ namespace AreaCodeGuessrVS22
                 if (mode == 1)
                 {
                     
-                    var statesOneAcIdx = rand.Next(0, StatesWithOneAreaCode.Count);
-
-
-                    int currAreacodeIdx = 0;
-
-                    ac = StatesWithOneAreaCode[statesOneAcIdx].areaCodes[currAreacodeIdx];
-
+                    var stateIdx = rand.Next(0, StatesWithOneAreaCode.Count);
+                    int areacodeIdx = 0;
+                    ac = StatesWithOneAreaCode[stateIdx].areaCodes[areacodeIdx];
 
                     // This is the one, use it
-                    res.stateName = StatesWithOneAreaCode[statesOneAcIdx].stateName;
+                    res.stateName = StatesWithOneAreaCode[stateIdx].stateName;
                     res.areaCodes.Add(ac);
 
                     done = true;
@@ -130,16 +130,29 @@ namespace AreaCodeGuessrVS22
         }
 
 
-        // test the input
-        public void ValidateInput()
+        // test the input, returns 1 on correct answer, else 0
+        public bool ValidateInput()
         {
+            bool result = false;
             if(inputTextBox.Text == hiddenStatename)
             {
                 // Good
-            }            else
+                ResultLbl.Content = "Result: GOOD";
+                
+
+                ResultLbl.Content = "Result: ";
+                result = true;
+            }
+            else
             {
                 // BAD
+                ResultLbl.Content = $"Result: Bad. It was {hiddenStatename}";
+                InputStateTxt.Text = "";
+                InputStateTxt.Focus();
             }
+
+            return result;
+             
         }
 
     }

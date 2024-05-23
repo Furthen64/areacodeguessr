@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Window1" Height="750" Width="750"
         Style="{DynamicResource CustomWindowStyle}">
-    <StackPanel>
+    <StackPanel Margin="25,0,0,0">
         <StackPanel>
             <StackPanel.Background>
                 <LinearGradientBrush EndPoint="1.204,0.5" StartPoint="0.056,0.5">
@@ -29,24 +29,16 @@
                 </GridView>
             </ListView.View>
         </ListView>
-            <Button Width="100" x:Name="startBtn" Click="startBtn_Click">Start</Button>
+            <Button Width="75px" x:Name="startBtn" Click="startBtn_Click" HorizontalAlignment="Left">Start</Button>
         </StackPanel>
         <StackPanel>
             <Label x:Name="_areacodeLbl">Areacode:</Label>
             <TextBox x:Name="_areaCodeTxt">AreaCode</TextBox>
             <TextBox x:Name="_inputStateTxt">Input here</TextBox>
-        </StackPanel>
-
+        </StackPanel> 
         <StackPanel>
-            <Grid Background="#FF00FF00">
-                <Label Content="Label" Height="28" HorizontalAlignment="Left" Name="BaseLabel" VerticalAlignment="Top" />
-                <TextBox Height="23" Margin="0,26,0,0" Name="BaseTextBox" VerticalAlignment="Top" />
-            </Grid>
+            <Button x:Name="_okBtn" IsDefault="True" Width="75px" HorizontalAlignment="Left" Click="_okBtn_Click">OK</Button>
+            <Label x:Name="_resultLbl">Result:</Label>
         </StackPanel>
-
-        <StackPanel>
-            <Button x:Name="_okBtn">OK</Button>
-        </StackPanel>
-    </StackPanel>
-        
+    </StackPanel>    
 </Window>

@@ -24,7 +24,7 @@ namespace AreaCodeGuessrVS22
 
         public Window1()
         {               
-            InitializeComponent();
+            InitializeComponent();            
             numberSeriesLV.ItemsSource = new List<String> { "2", "3", "4", "5", "6", "7", "8", "9" };
             numberSeriesLV.SelectedIndex = 0;
             sacm = new SACManager(numberSeriesLV, _inputStateTxt, _areacodeLbl, _areaCodeTxt);    
@@ -43,6 +43,14 @@ namespace AreaCodeGuessrVS22
 
             sacm.NextQuestion();
 
+        }
+
+        private void _okBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(sacm.ValidateInput())
+            {
+                sacm.NextQuestion();
+            }
         }
     }
 }

@@ -10,15 +10,11 @@ namespace AreaCodeGuessrVS22
     public class StateAreaCode
     {
         public string stateName;
-        public List<int> areaCodes;
-
-        
+        public List<int> areaCodes;  
 
         public StateAreaCode()
         {
             areaCodes = new List<int>();
         }
-    
-
     }
 }
