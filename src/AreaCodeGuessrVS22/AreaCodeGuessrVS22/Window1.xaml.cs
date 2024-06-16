@@ -27,7 +27,7 @@ namespace AreaCodeGuessrVS22
             InitializeComponent();            
             numberSeriesLV.ItemsSource = new List<String> { "2", "3", "4", "5", "6", "7", "8", "9" };
             numberSeriesLV.SelectedIndex = 0;
-            sacm = new SACManager(numberSeriesLV, _inputStateTxt, _areacodeLbl, _areaCodeTxt);    
+            sacm = new SACManager(numberSeriesLV, _inputStateTxt, _areacodeLbl, _areaCodeTxt, _resultLbl);    
         }
 
 

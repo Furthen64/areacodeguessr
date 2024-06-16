@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AreaCodeGuessrVS22", "AreaCodeGuessrVS22\AreaCodeGuessrVS22.csproj", "{DC21BB2A-8F16-4F26-BE2F-E0379E9F3730}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardGuessrVS22", "FlashcardGuessrVS22\FlashcardGuessrVS22.csproj", "{72FC3FDC-F4A5-4A4D-9691-5DA0C27DBB41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DC21BB2A-8F16-4F26-BE2F-E0379E9F3730}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC21BB2A-8F16-4F26-BE2F-E0379E9F3730}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC21BB2A-8F16-4F26-BE2F-E0379E9F3730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72FC3FDC-F4A5-4A4D-9691-5DA0C27DBB41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FC3FDC-F4A5-4A4D-9691-5DA0C27DBB41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FC3FDC-F4A5-4A4D-9691-5DA0C27DBB41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FC3FDC-F4A5-4A4D-9691-5DA0C27DBB41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

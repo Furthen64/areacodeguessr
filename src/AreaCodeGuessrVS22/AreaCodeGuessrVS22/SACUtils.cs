@@ -22,8 +22,8 @@ namespace AreaCodeGuessrVS22
         private List<StateAreaCode> statesWithOneAreaCode;
         private TextBox areaCodeTxt;
         private TextBox inputTextBox;
-        private ListView numberSeriesLV;       // The Window1.xaml listview
-        
+        private ListView numberSeriesLV;       // The Window1.xaml listview        
+        private Label areacodeLbl;
         private Label resultLbl;
         public List<StateAreaCode> AllStates { get => allStates; set => allStates = value; }
         public List<StateAreaCode> StatesWithOneAreaCode { get => statesWithOneAreaCode; set => statesWithOneAreaCode = value; }
@@ -31,12 +31,13 @@ namespace AreaCodeGuessrVS22
         public TextBox InputStateTxt { get => inputTextBox; set => inputTextBox = value; }
         public TextBox AreaCodeTxt { get => areaCodeTxt; set => areaCodeTxt = value; }
         public Label ResultLbl { get => resultLbl; set => resultLbl = value; }
-        
+        public Label AreacodeLbl { get => areacodeLbl; set => areacodeLbl = value; }
+
 
         // The manager grabs all the controllers it needs,
         // So when its time to read or modify its values, it doesnt have to ask for it
 
-        public SACManager(ListView listviewCtrl, TextBox _inputStateTxt, Label _resultLbl, TextBox _areaCodeTxt)
+        public SACManager(ListView listviewCtrl, TextBox _inputStateTxt, Label _areacodeLbl, TextBox _areaCodeTxt, Label _resultLbl)
         {
             // Assign Controls
             NumberSeriesLV = listviewCtrl;
@@ -48,10 +49,7 @@ namespace AreaCodeGuessrVS22
             rand = new Random(DateTime.UtcNow.Millisecond);
             Tuple<List<StateAreaCode>, List<StateAreaCode>> tuple = SACUtils.LoadFile();
             AllStates = tuple.Item1;
-            StatesWithOneAreaCode = tuple.Item2;
-
-
-            
+            StatesWithOneAreaCode = tuple.Item2;  
         }
 
         
@@ -60,12 +58,10 @@ namespace AreaCodeGuessrVS22
             StateAreaCode randomSAC = RandomizeAreaCode(1);           
 
             if (randomSAC != null && randomSAC.areaCodes.Any())
-            {
-
+            {          
                 AreaCodeTxt.Text = randomSAC.areaCodes[0].ToString();
                 hiddenStatename = randomSAC.stateName;
-                InputStateTxt.Text = "";
-                
+                InputStateTxt.Text = "";  
             }
 
         }
@@ -100,15 +96,15 @@ namespace AreaCodeGuessrVS22
                 }
                 else if (mode == 0)
                 {
-                    //allstateIdx = rand.Next(0, 51);
-                    //currAreacodeIdx = rand.Next(0, allStates[allstateIdx].areaCodes.Count);
-                    //ac = allStates[allstateIdx].areaCodes[currAreacodeIdx];
-                    //var thing = ac.ToString()[0].ToString();
 
+                    var allstateIdx = rand.Next(0, 51);
+                    var currAreacodeIdx = rand.Next(0, allStates[allstateIdx].areaCodes.Count);
+                    ac = allStates[allstateIdx].areaCodes[currAreacodeIdx];
+                    var thing = ac.ToString()[0].ToString();
 
-
-                    //foreach (ListViewItem lvi in NumberSeriesLV.CheckedItems)
-                    //{
+                    foreach (ListViewItem lvi in NumberSeriesLV.Items)
+                    {
+                        Debug.WriteLine(lvi.ToString());
                     //    if (lvi.Text == thing)
                     //    {
                     //        // This is the one, use it
@@ -116,7 +112,7 @@ namespace AreaCodeGuessrVS22
                     //        res.areaCodes.Add(ac);
                     //        done = true;
                     //    }
-                    //}
+                    }
 
                 }
             }
@@ -137,10 +133,7 @@ namespace AreaCodeGuessrVS22
             if(inputTextBox.Text == hiddenStatename)
             {
                 // Good
-                ResultLbl.Content = "Result: GOOD";
-                
-
-                ResultLbl.Content = "Result: ";
+                ResultLbl.Content = "Result: GOOD ";
                 result = true;
             }
             else
