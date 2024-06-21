@@ -21,15 +21,14 @@ namespace FlashcardGuessrVS22
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string defaultError = "sorry for being a bitch, but some of the files have malformed naming. example of filename: Sweden_0001_kista.png, where the nr needs to be between 0001 to 9999";
         private List<CountryImg> countryImages = null;
-        private CountryImg currentCountry = null;
-
+        private CountryImg currentCountry = null;    
 
         public MainWindow()
         {
             InitializeComponent();
-        }
-
+        }     
 
         // untested
         public void NextCountry()
@@ -40,6 +39,7 @@ namespace FlashcardGuessrVS22
 
 
             // ok we have a country, show its image
+            stackpanBottom.Children.Clear();            
             stackpanBottom.Children.Add(resizedImage);
         }
 
@@ -58,7 +58,7 @@ namespace FlashcardGuessrVS22
                 }
                 else
                 {
-                    MessageBox.Show($"Sorry, the folder {Properties.Settings.Default.LastOpenedFolder} does not fit the mold");
+                    MessageBox.Show($"The folder {Properties.Settings.Default.LastOpenedFolder} does not fit the mold, " + defaultError);
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace FlashcardGuessrVS22
         public bool ValidateInput(CountryImg countryImg, string inputStr)
         {
             if (countryImg == null || string.IsNullOrEmpty(inputStr)) { return false; }
-            return (countryImg.GetCountry() == inputStr);
+            return (countryImg.GetCountry().ToLower() == inputStr.ToLower());
         }
 
         private void _okBtn_Click(object sender, RoutedEventArgs e)
@@ -80,18 +80,14 @@ namespace FlashcardGuessrVS22
             if (ValidateInput(currentCountry, inputCountry.Text))
             {
                 MessageBox.Show("Great!");
-
-
-                // delete
-                countryImages.Remove(currentCountry);       // untested
-
-                // next
+                countryImages.Remove(currentCountry);   // todo: maybe we want to save these but for now this is easy way to progress the game
                 NextCountry();
             }
             else
             {
                 MessageBox.Show("Wrong.");
             }
+            inputCountry.Text = "";
         }
 
         // untested
@@ -161,7 +157,7 @@ namespace FlashcardGuessrVS22
                         }
                         else
                         {
-                            MessageBox.Show("sorry for being a bitch, but some of the files have malformed naming. example of filename: Sweden_0001_kista.png, where the nr needs to be between 0001 to 9999");
+                            MessageBox.Show(defaultError);
                         }
                     }
                 }
@@ -188,8 +184,7 @@ namespace FlashcardGuessrVS22
             if (fullFolderPath != "")
             {
                 Properties.Settings.Default.LastOpenedFolder = fullFolderPath;
-                Properties.Settings.Default.Save();
-                //LoadCountriesFromFolder(fullFolderPath);     
+                Properties.Settings.Default.Save();                
             }
         }
     }
@@ -244,7 +239,7 @@ namespace FlashcardGuessrVS22
             return croppedImage;
         }
 
-        // untested
+        
         // returns false on error
         public bool SetValues(string _fullPathToImage, string _filename, string _countryName, int _seqNo, string _extraInfo)
         {
@@ -261,9 +256,7 @@ namespace FlashcardGuessrVS22
             originalBitmap = new BitmapImage();
             originalBitmap.BeginInit();
             originalBitmap.UriSource = new Uri(fullPathToImage);
-            originalBitmap.EndInit();
-
-
+            originalBitmap.EndInit();   
 
             return true;
         }
