@@ -23,24 +23,38 @@ namespace FlashcardGuessrVS22
     {
         private string defaultError = "sorry for being a bitch, but some of the files have malformed naming. example of filename: Sweden_0001_kista.png, where the nr needs to be between 0001 to 9999";
         private List<CountryImg> countryImages = null;
-        private CountryImg currentCountry = null;    
+        private CountryImg currentCountry = null;
+        private Random rand;
 
         public MainWindow()
         {
             InitializeComponent();
+            rand = new Random(DateTime.UtcNow.Millisecond);
         }     
 
         // untested
         public void NextCountry()
         {
             // decide on which one
-            currentCountry = countryImages.Last();
-            Image resizedImage = currentCountry.GetSetSizedImage(1920, 1080);
+            int randIdx = rand.Next(0, countryImages.Count-1);
+
+            currentCountry = countryImages[randIdx];
+            Image resizedImage = currentCountry.GetTransformedImage(1920, 1080);
+            
+
+
+            
+            // need some tips
+            var tt = new ToolTip();
+            tt.Content = $"Country starts with: {countryImages[randIdx].GetCountryName()[0]}";
+            resizedImage.ToolTip = tt;
+            
 
 
             // ok we have a country, show its image
-            stackpanBottom.Children.Clear();            
+            stackpanBottom.Children.Clear();
             stackpanBottom.Children.Add(resizedImage);
+
         }
 
         // untested
@@ -70,7 +84,7 @@ namespace FlashcardGuessrVS22
         public bool ValidateInput(CountryImg countryImg, string inputStr)
         {
             if (countryImg == null || string.IsNullOrEmpty(inputStr)) { return false; }
-            return (countryImg.GetCountry().ToLower() == inputStr.ToLower());
+            return (countryImg.GetCountryName().ToLower() == inputStr.ToLower());
         }
 
         private void _okBtn_Click(object sender, RoutedEventArgs e)
@@ -90,7 +104,7 @@ namespace FlashcardGuessrVS22
             inputCountry.Text = "";
         }
 
-        // untested
+        // untested , somewhat tested
         private List<CountryImg> LoadCountriesFromFolder(string pathToPngFiles)
         {
             List<CountryImg> result = new List<CountryImg>();
@@ -168,7 +182,8 @@ namespace FlashcardGuessrVS22
             }
 
             return result;
-        }
+        }     
+        
         private void browseBtn_Click(object sender, RoutedEventArgs e)
         {
             string fullFolderPath = "";
@@ -208,30 +223,52 @@ namespace FlashcardGuessrVS22
             return filename;
         }
 
-        public string GetCountry()
+        public string GetCountryName()
         {
             return countryName;
         }
 
-        public Image GetSetSizedImage(int widthPx, int heightPx)
+        public Image GetTransformedImage(int wantedWidthPx, int wantedHeightPx)
         {
             Image croppedImage = new Image();
 
 
             // How big is it? Too big?
-            croppedImage.Width = 400;
+            croppedImage.Width = wantedWidthPx;
             croppedImage.Margin = new Thickness(2);
 
             // Create a CroppedBitmap from BitmapImage
-            if (originalBitmap.PixelWidth >= 400 && originalBitmap.PixelHeight >= 400)
-            {
-                var scale = Math.Max(originalBitmap.PixelWidth, originalBitmap.PixelHeight) / 400.0;
 
-                var targetBitmap = new TransformedBitmap((BitmapSource)originalBitmap, new ScaleTransform(1 / scale, 1 / scale));
 
-                croppedImage.Source = targetBitmap;
-            }
-            else
+            // 
+            // this needs THINKING
+            //
+
+            Double scale = 1.0;
+
+            //if (originalBitmap.PixelWidth > wantedWidthPx)
+            //{
+            //    scale = originalBitmap.PixelWidth / wantedWidthPx;
+            //    var targetBitmap = new TransformedBitmap((BitmapSource)originalBitmap, new ScaleTransform(1 / scale, 1 / scale));
+
+            //    // after scaling... does it look good on height too?
+            //    if(targetBitmap.PixelHeight > wantedHeightPx)
+            //    {
+            //        // jag är för trött. scale = targetBitmap...
+
+            //        // men här slutade du iaf :) bra kodat 
+
+            //    }
+
+            //    // ok? ok:
+            //    croppedImage.Source = targetBitmap;   
+
+            //}
+            //else if(originalBitmap.PixelHeight > wantedHeightPx)
+            //{   
+             
+            //}
+            //else
             {
                 croppedImage.Source = originalBitmap;
             }
