@@ -36,10 +36,16 @@ namespace FlashcardGuessrVS22
         public void NextCountry()
         {
             // decide on which one
+            if(countryImages.Count() == 0)
+            {
+                MessageBox.Show("GG you done them all!!");
+                return;
+            }
             int randIdx = rand.Next(0, countryImages.Count-1);
 
             currentCountry = countryImages[randIdx];
-            Image resizedImage = currentCountry.GetTransformedImage(1920, 1080);
+            double scalefactor = 0.6;
+            Image resizedImage = currentCountry.GetTransformedImage((int)Math.Round(1920* scalefactor), (int)Math.Round(1080* scalefactor));
             
 
 
@@ -307,7 +313,7 @@ namespace FlashcardGuessrVS22
         public bool Equals(CountryImg? other)
         {
             if (other == null) return false;
-            return other.countryName == this.countryName;
+            return other.GetId() == this.GetId();
         }
     }
 }

@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FlashcardGuessrVS22"
         mc:Ignorable="d"
-        Title="FlashcardGuessr" Height="750" Width="750"
-        Style="{DynamicResource CustomWindowStyle}">
-    <StackPanel Margin="25,0,0,0">
+        Title="FlashcardGuessr" Width="1920" Height="1080" 
+        Style="{DynamicResource CustomWindowStyle}"
+        Background="#2c2c2c">
+    <StackPanel Margin="30,0,0,0" Background="#1F1F1F">
         <StackPanel>
             <StackPanel.Background>
                 <LinearGradientBrush EndPoint="1.204,0.5" StartPoint="0.056,0.5">
