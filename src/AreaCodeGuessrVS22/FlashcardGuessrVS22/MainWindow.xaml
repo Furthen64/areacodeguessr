@@ -18,7 +18,7 @@
             </StackPanel.Background>
             <Label FontWeight="Bold" FontSize="24pt" Padding="5,5,5,0">FlashcardGuessr v0.1</Label>
             <Label FontSize="9pt" Padding="5,5,5,0">Choose folder where PNG files are, hit the Start button</Label>
-            <Label FontSize="9pt" Padding="5,0,5,6">Filename format for the pngs are "country_####.png" where # are numbers from 0-9</Label>
+            <Label FontSize="9pt" Padding="5,0,5,6">Name your png files like: country__####__description.png" where # are numbers from 0-9</Label>
         </StackPanel>
         <TabPanel Margin="2,10,2,2" Height="58" >
             <Button Width="75px" x:Name="browseBtn" Click="browseBtn_Click"  HorizontalAlignment="Left" Padding="5">Browse</Button>
