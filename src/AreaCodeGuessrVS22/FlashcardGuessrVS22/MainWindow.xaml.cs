@@ -44,16 +44,15 @@ namespace FlashcardGuessrVS22
             int randIdx = rand.Next(0, countryImages.Count-1);
 
             currentCountry = countryImages[randIdx];
-            double scalefactor = 0.6;
+            double scalefactor = 0.65;
             Image resizedImage = currentCountry.GetTransformedImage((int)Math.Round(1920* scalefactor), (int)Math.Round(1080* scalefactor));
-            
-
-
+                           
             
             // need some tips
             var tt = new ToolTip();
             tt.Content = $"Country starts with: {countryImages[randIdx].GetCountryName()[0]}";
             resizedImage.ToolTip = tt;
+            resizedImage.MouseLeftButtonUp += ResizedImage_MouseLeftButtonUp;
             
 
 
@@ -61,6 +60,11 @@ namespace FlashcardGuessrVS22
             stackpanBottom.Children.Clear();
             stackpanBottom.Children.Add(resizedImage);
 
+        }
+
+        private void ResizedImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show(currentCountry.GetCountryName());
         }
 
         // untested
@@ -195,7 +199,16 @@ namespace FlashcardGuessrVS22
             string fullFolderPath = "";
             var dlg = new FolderPicker();
 
+
+
+            if(!Directory.Exists(Properties.Settings.Default.LastOpenedFolder))
+            {
+                Properties.Settings.Default.LastOpenedFolder = "C:\\windows\\system32\\";
+            }
+
+
             dlg.InputPath = Properties.Settings.Default.LastOpenedFolder;
+
 
             if (dlg.ShowDialog() == true)
             {
