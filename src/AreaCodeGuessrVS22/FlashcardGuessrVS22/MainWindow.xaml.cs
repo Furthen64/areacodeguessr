@@ -26,13 +26,36 @@ namespace FlashcardGuessrVS22
         private CountryImg currentCountry = null;
         private Random rand;
 
+        private int canvasWidth = 0;
+        private int canvasHeight = 0;
+
+        private string fileFormat = "";
+        private string gameMode = "";
+
         public MainWindow()
         {
             InitializeComponent();
             rand = new Random(DateTime.UtcNow.Millisecond);
+            this.SizeChanged += OnWindowSizeChanged;
+            try
+            {
+                CurrentPath.Content = Properties.Settings.Default.LastOpenedFolder.ToString();
+            } 
+            catch(Exception )
+            {
+
+            }
+        }
+
+        private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+            canvasWidth = (int)Math.Round(e.NewSize.Height * 0.75); // 25% of the surface is for the buttons and stuff
+            canvasHeight = (int)Math.Round(e.NewSize.Width * 0.75);
+            //double prevWindowHeight = e.PreviousSize.Height;
+            //double prevWindowWidth = e.PreviousSize.Width;
         }     
 
-        // untested
         public void NextCountry()
         {
             // decide on which one
@@ -41,11 +64,31 @@ namespace FlashcardGuessrVS22
                 MessageBox.Show("GG you done them all!!");
                 return;
             }
-            int randIdx = rand.Next(0, countryImages.Count-1);
+            int randIdx = rand.Next(0, countryImages.Count-1);   
 
+            
             currentCountry = countryImages[randIdx];
-            double scalefactor = 0.65;
-            Image resizedImage = currentCountry.GetTransformedImage((int)Math.Round(1920* scalefactor), (int)Math.Round(1080* scalefactor));
+            
+            
+            double imgToWindowFactor = 1.0;
+            int imgHeight = currentCountry.getRawImage().PixelHeight;
+            int imgWidth = currentCountry.getRawImage().PixelWidth;
+            
+            
+            if (imgHeight > canvasHeight)
+            {
+                imgToWindowFactor = (double)imgHeight / canvasHeight;   
+            }
+
+            if (imgWidth > canvasWidth)
+            {
+                imgToWindowFactor = (double)imgWidth / canvasWidth;
+            }
+
+                
+            int newWidth = (int)Math.Round(imgWidth / imgToWindowFactor);
+            int newHeight = (int)Math.Round(imgHeight / imgToWindowFactor);
+            Image resizedImage = currentCountry.GetTransformedImage(newWidth, newHeight);
                            
             
             // need some tips
@@ -65,6 +108,7 @@ namespace FlashcardGuessrVS22
         private void ResizedImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             MessageBox.Show(currentCountry.GetCountryName());
+            _filenameLbl.Content = currentCountry.GetId();
         }
 
         // untested
@@ -119,7 +163,7 @@ namespace FlashcardGuessrVS22
         {
             List<CountryImg> result = new List<CountryImg>();
 
-            // Get the full path to the png files "fullPath"
+            // Get the full path to each of the png files.
             // Break it up and create a Country for each file that matches the regexp pattern 
             try
             {
@@ -129,61 +173,91 @@ namespace FlashcardGuessrVS22
                 foreach (string fullPath in fullPaths)
                 {
                     string fileName = System.IO.Path.GetFileName(fullPath);
-                    string pattern = @"[a-z]+_[0-9]{4}[_a-zA-Z0-9]*\.(png|PNG)";
+                    string pattern = "";
                     RegexOptions options = RegexOptions.Singleline;
 
-                    foreach (Match m in Regex.Matches(fileName, pattern, options))
+
+                    // "Sweden_0001_Kista.png"
+
+                    if (fileFormat == "SyntaxCountryNumberExtrainfo")
                     {
-                        CountryImg countryImg = new CountryImg();
-
-
-                        Debug.WriteLine("-----");
-
-                        // Create a Country instance 
-                        // DOnt get sidetracked, I know you wanna play geoguessr or do something else... OH BOY DO I 
-                        // fileName = "Sweden_0001_kista.png"
-                        // lets get stuff out of this so split it on the _
-
-
-                        List<string> thing = fileName.Split('_', '.').ToList();
-                        foreach (string str in thing)
+                        pattern = @"[a-z]+_[0-9]{4}[_a-zA-Z0-9]*\.(png|PNG)";
+                        foreach (Match m in Regex.Matches(fileName, pattern, options))
                         {
-                            Debug.WriteLine($"\tsplit=\"{str}\"");
-                        }
+                            CountryImg countryImg = new CountryImg();
 
-                        string countryStr = "";
-                        string seqNr = "";
-                        string extraInfo = "";
-
-                        switch (thing.Count)
-                        {
-
-                            case 3:
-                                countryStr = thing[0];
-                                seqNr = thing[1];
-                                break;
-                            case 4:
-                                countryStr = thing[0];
-                                seqNr = thing[1];
-                                extraInfo = thing[2];
-                                break;
-
-                        }
-
-                        int nr = -1;
-                        if (int.TryParse(seqNr, out nr))
-                        {
-                            // Nice, a real country
-                            if (countryImg.SetValues(fullPath, fileName, countryStr, nr, extraInfo))
+                            List<string> thing = fileName.Split('_', '.').ToList();
+                            if (thing.Count < 2)
                             {
-                                result.Add(countryImg);
+                                MessageBox.Show($"filename={fileName} {defaultError}");
+                            }
+                            else
+                            {
+                                foreach (string str in thing)
+                                {
+                                    Debug.WriteLine($"\tsplit=\"{str}\"");
+                                }
+
+                                string countryStr = "";
+                                string seqNr = "";
+                                string extraInfo = "";
+
+                                switch (thing.Count)
+                                {
+
+                                    case 3:
+                                        countryStr = thing[0];
+                                        seqNr = thing[1];
+                                        break;
+                                    case 4:
+                                        countryStr = thing[0];
+                                        seqNr = thing[1];
+                                        extraInfo = thing[2];
+                                        break;
+
+                                }
+
+                                int nr = -1;
+                                if (int.TryParse(seqNr, out nr))
+                                {
+                                    // Nice, a real country
+                                    if (countryImg.SetValues(fullPath, fileName, countryStr, nr, extraInfo))
+                                    {
+                                        result.Add(countryImg);
+                                    }
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"filename={fileName} {defaultError}");
+                                }
                             }
                         }
-                        else
-                        {
-                            MessageBox.Show(defaultError);
-                        }
                     }
+                    else if(fileFormat == "SyntaxCountry")
+                    {   
+
+
+                        // "Country.png"
+
+                        pattern = @"^[a-zA-Z]*\.(png|PNG)";
+                        foreach (Match m in Regex.Matches(fileName, pattern, options))
+                        {
+                            CountryImg countryImg = new CountryImg();
+                            try
+                            {
+                                string countryStr = m.Value.Split('.')[0];
+
+                                if (countryImg.SetValues(fullPath, fileName, countryStr, 0, ""))
+                                {
+                                    result.Add(countryImg);
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                MessageBox.Show($"Something wrong with this filename= {m.Value}, {defaultError}");
+                            }     
+                        }
+                    }   
                 }
             }
             catch (Exception ex)
@@ -221,6 +295,28 @@ namespace FlashcardGuessrVS22
                 Properties.Settings.Default.Save();                
             }
         }
+
+
+                                 
+        private void FormatRadiobtn_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton? li = sender as RadioButton;
+            
+            if (li != null && li.Content != null && li.Name != null) 
+            {  
+                fileFormat = li.Name;
+            }   
+        }
+
+        private void GameModeRapidfire_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton? li = sender as RadioButton;
+
+            if (li != null && li.Content != null && li.Name != null)
+            {
+                gameMode = li.Content.ToString();
+            }
+        }
     }
 
 
@@ -240,6 +336,12 @@ namespace FlashcardGuessrVS22
         public string GetId()
         {
             return filename;
+        }
+
+
+        public BitmapImage getRawImage()
+        {
+            return originalBitmap; 
         }
 
         public string GetCountryName()

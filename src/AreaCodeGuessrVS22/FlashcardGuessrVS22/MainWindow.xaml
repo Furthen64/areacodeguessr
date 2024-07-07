@@ -17,20 +17,35 @@
                 </LinearGradientBrush>
             </StackPanel.Background>
             <Label FontWeight="Bold" FontSize="24pt" Padding="5,5,5,0">FlashcardGuessr v0.1</Label>
-            <Label FontSize="9pt" Padding="5,5,5,0">Choose folder where PNG files are, hit the Start button</Label>
-            <Label FontSize="9pt" Padding="5,0,5,6">Name your png files like: country__####__description.png" where # are numbers from 0-9</Label>
+            <Label FontSize="9pt" Padding="5,5,5,0" Width="1760">Choose folder where PNG files are, hit the Start button</Label>
+            <Label FontSize="9pt" Padding="5,0,5,6" Width="1762">Name your png files like: country__####__description.png" where # are numbers from 0-9</Label>
         </StackPanel>
-        <TabPanel Margin="2,10,2,2" Height="58" >
-            <Button Width="75px" x:Name="browseBtn" Click="browseBtn_Click"  HorizontalAlignment="Left" Padding="5">Browse</Button>
-            <Button Width="75px" x:Name="startBtn" Click="startBtn_Click" HorizontalAlignment="Left" Padding="5">Start</Button>
+        <TabPanel Margin="2,10,2,2" Height="25" Background="DarkSlateGray" >
+            <Button Width="75" x:Name="browseBtn" Click="browseBtn_Click"  HorizontalAlignment="Left" Padding="5">Browse</Button>
+            <Label Name="CurrentPath">C:\windows\system32\</Label>
+
         </TabPanel>
-        <TabPanel Height="53">
+        <TabPanel Margin="2,10,2,2">
+            <Label Width="135">File naming format:</Label>
+            <RadioButton Name="SyntaxCountryNumberExtrainfo" GroupName="SyntaxGroup"  IsChecked="True" Checked="FormatRadiobtn_Checked" Width="228">Country__0001__extraInfo.png</RadioButton>
+            <RadioButton Name="SyntaxCountry" GroupName="SyntaxGroup"  Checked="FormatRadiobtn_Checked" Width="102">Country.png</RadioButton>
+        </TabPanel>
+        <TabPanel Margin="2,10,2,2" Background="DarkSlateGray">
+            <Label Padding="2,2,42,2" Width="136">Game mode:</Label>
+            <RadioButton Name="GameModeRapidfire" GroupName="GameModeGroup"  IsChecked="True"  Width="137" Checked="GameModeRapidfire_Checked">Rapid fire mode</RadioButton>
+            <RadioButton Name="GameModeStandard" GroupName="GameModeGroup"  Checked="GameModeRapidfire_Checked">Default mode</RadioButton>
+        </TabPanel>
+        <TabPanel Margin="2,10,2,2">
+            <Button Width="79" x:Name="startBtn" Click="startBtn_Click" Padding="5">Start</Button>
+        </TabPanel>
+        <TabPanel Margin="0,25,2,2" Height="55">
             <Label x:Name="_areacodeLbl">Enter country here:</Label>
             <TextBox x:Name="inputCountry" Background="DarkGreen" Width="235"></TextBox>
             <Button x:Name="_okBtn" IsDefault="True" Width="75px" HorizontalAlignment="Left" Click="_okBtn_Click">OK</Button>
         </TabPanel>
-        <StackPanel x:Name="stackpanBottom">            
+        <StackPanel x:Name="stackpanBottom">
             <Label x:Name="_resultLbl">Result:</Label>
+            <Label Name="_filenameLbl" Visibility="Hidden">Filename:</Label>
         </StackPanel>
     </StackPanel>
 </Window>
