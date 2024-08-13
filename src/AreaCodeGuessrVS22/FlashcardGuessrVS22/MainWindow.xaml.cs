@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Net.WebRequestMethods;
 
 namespace FlashcardGuessrVS22
 {
@@ -22,19 +23,24 @@ namespace FlashcardGuessrVS22
     public partial class MainWindow : Window
     {
         private string defaultError = "sorry for being a bitch, but some of the files have malformed naming. example of filename: Sweden_0001_kista.png, where the nr needs to be between 0001 to 9999";
-        private List<CountryImg> countryImages = null;
-        private CountryImg currentCountry = null;
+        private List<CountryImg> countryImages;
+        private int amountAtStart = 0;
+        private CountryImg currentCountry;
         private Random rand;
+        private double userScale = 0.5;
 
         private int canvasWidth = 0;
         private int canvasHeight = 0;
 
-        private string fileFormat = "";
-        private string gameMode = "";
+        private string fileFormat = "SyntaxCountry";
+        private GameModes gameMode = GameModes.RapidFire;
+        public enum GameModes { Standard, RapidFire };
+
+        private Score score;
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
             rand = new Random(DateTime.UtcNow.Millisecond);
             this.SizeChanged += OnWindowSizeChanged;
             try
@@ -58,17 +64,15 @@ namespace FlashcardGuessrVS22
 
         public void NextCountry()
         {
-            // decide on which one
             if(countryImages.Count() == 0)
             {
-                MessageBox.Show("GG you done them all!!");
+                MessageBox.Show("GG CHAMP, you done them all!!");
+                // Show the gif of the guy giving thumbs up
                 return;
             }
-            int randIdx = rand.Next(0, countryImages.Count-1);   
-
+            int randIdx = rand.Next(0, countryImages.Count-1);
             
             currentCountry = countryImages[randIdx];
-            
             
             double imgToWindowFactor = 1.0;
             int imgHeight = currentCountry.getRawImage().PixelHeight;
@@ -85,9 +89,19 @@ namespace FlashcardGuessrVS22
                 imgToWindowFactor = (double)imgWidth / canvasWidth;
             }
 
-                
-            int newWidth = (int)Math.Round(imgWidth / imgToWindowFactor);
-            int newHeight = (int)Math.Round(imgHeight / imgToWindowFactor);
+            if (imgToWindowFactor < 0.1)
+            {
+                imgToWindowFactor = 0.1;
+            }
+            double newWidthDbl = userScale * imgWidth / imgToWindowFactor;
+            double newHeightDbl = userScale *imgHeight / imgToWindowFactor;
+            if (newWidthDbl < 500)
+            {
+                newWidthDbl = 500;
+            }
+            
+            int newWidth = (int)Math.Round(newWidthDbl);
+            int newHeight = (int)Math.Round(newHeightDbl);
             Image resizedImage = currentCountry.GetTransformedImage(newWidth, newHeight);
                            
             
@@ -111,17 +125,21 @@ namespace FlashcardGuessrVS22
             _filenameLbl.Content = currentCountry.GetId();
         }
 
-        // untested
+           
         public void StartGame()
         {
+            score = new Score();
+            progressBar.Value = 0;   
 
             // if !settings is system32 then go aghead and start
             if (Properties.Settings.Default.LastOpenedFolder != "C:\\windows\\system32")
             {
                 countryImages = LoadCountriesFromFolder(Properties.Settings.Default.LastOpenedFolder);
+                
 
                 if (countryImages != null && countryImages.Any())
                 {
+                    score.amountAtStart = countryImages.Count();
                     NextCountry();
                 }
                 else
@@ -129,36 +147,91 @@ namespace FlashcardGuessrVS22
                     MessageBox.Show($"The folder {Properties.Settings.Default.LastOpenedFolder} does not fit the mold, " + defaultError);
                 }
             }
+
+            
         }
         private void startBtn_Click(object sender, RoutedEventArgs e)
         {
             StartGame();
         }
 
-        public bool ValidateInput(CountryImg countryImg, string inputStr)
+
+        // Returns true if it should proceed with next question
+        public bool ValidateInput(CountryImg countryImg, string inputStr, Score score)
         {
-            if (countryImg == null || string.IsNullOrEmpty(inputStr)) { return false; }
-            return (countryImg.GetCountryName().ToLower() == inputStr.ToLower());
+            bool nextQuestion = false;
+            string resultStr = ""; 
+
+            if (gameMode == GameModes.Standard)
+            {
+                if (countryImg == null || string.IsNullOrEmpty(inputStr)) { return false; }
+
+                if (countryImg.GetCountryName().ToLower() == inputStr.ToLower())
+                {
+                    resultStr = "Great!";
+                    score.correct++;
+                    if(score.failedCountries.Contains(countryImg))//UNTESTED
+                    {
+                        score.failedCountries.Remove(countryImg);//UNTESTED
+                    }
+                    
+                    countryImages.Remove(currentCountry);   // todo: maybe we want to save these but for now this is easy way to progress the game
+                    nextQuestion = true;
+                }
+                else
+                {
+                    score.failedCountries.Add(countryImg);
+                    score.misses++;
+                    resultStr = "Wrong";
+                }
+
+            } 
+            else if(gameMode == GameModes.RapidFire)            
+            {
+                if (countryImg.GetCountryName().ToLower() == inputStr.ToLower())
+                {
+                    resultStr = $"Great!";
+                    countryImages.Remove(currentCountry);   // todo: maybe we want to save these but for now this is easy way to progress the game
+                }   
+                else
+                {
+                    resultStr = $"Wrong. The correct country was: {countryImg.GetCountryName()}";
+                }
+
+                nextQuestion = true;
+
+            }      
+             
+            inputCountry.Text = "";
+
+            MessageBox.Show(resultStr);
+
+            return nextQuestion;
+            
+        }
+
+        private void UpdateProgressbar(Score score)
+        {
+            progressBar.Maximum = score.amountAtStart;
+            progressBar.Value = score.amountAtStart - countryImages.Count();
+
         }
 
         private void _okBtn_Click(object sender, RoutedEventArgs e)
         {
             if (currentCountry == null) { return; }
 
-            if (ValidateInput(currentCountry, inputCountry.Text))
+            bool doNextQuestion = ValidateInput(currentCountry, inputCountry.Text, score);
+
+            UpdateProgressbar(score);
+
+            if(doNextQuestion)
             {
-                MessageBox.Show("Great!");
-                countryImages.Remove(currentCountry);   // todo: maybe we want to save these but for now this is easy way to progress the game
                 NextCountry();
-            }
-            else
-            {
-                MessageBox.Show("Wrong.");
-            }
-            inputCountry.Text = "";
+            } 
         }
 
-        // untested , somewhat tested
+        
         private List<CountryImg> LoadCountriesFromFolder(string pathToPngFiles)
         {
             List<CountryImg> result = new List<CountryImg>();
@@ -172,6 +245,8 @@ namespace FlashcardGuessrVS22
 
                 foreach (string fullPath in fullPaths)
                 {
+
+                    
                     string fileName = System.IO.Path.GetFileName(fullPath);
                     string pattern = "";
                     RegexOptions options = RegexOptions.Singleline;
@@ -314,8 +389,21 @@ namespace FlashcardGuessrVS22
 
             if (li != null && li.Content != null && li.Name != null)
             {
-                gameMode = li.Content.ToString();
+                if(li.Content.ToString() == "Default mode")
+                {
+                    gameMode = GameModes.Standard;
+                }
+                if(li.Content.ToString() == "Rapid fire mode")
+                {
+                    gameMode = GameModes.RapidFire;
+                } 
             }
+        }
+
+        private void ImageSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            userScale = 0.1 + ((double) e.NewValue*4.0);
+            
         }
     }
 
